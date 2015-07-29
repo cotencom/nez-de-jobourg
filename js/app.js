@@ -2,36 +2,46 @@ $(document).ready(function() {
 	
 	page("*", function(context, controller) {
 		if(document.location.pathname != context.path) {
-			console.log(context);
-			var content = null;
-			$(".big-container .container").fadeOut(500);
-			
-			
-			$(".navbar-nav li").removeClass("active", {duration:500});
-				
+			//$(".big-container .container").hide();
 
+			$(".navbar-nav li").removeClass("active");
 			if(context.path == "/") context.path = "index.html";
-			jQuery.get(context.path + "-ajax", function(data) {
+			jQuery.get("/ajax/" + context.path + ".json", function(data) {
+				content = data.content;
 				var parent = $(".big-container").parent();
+				$("title").html(data.title);
 				$(".big-container").remove();
-				parent.append(data);
-				$(".big-container .container").hide();
-				$(".big-container .container").fadeIn(500);
+				parent.append(content);
+				/*$(".big-container .container").hide();
+				$(".big-container .container").show();*/
 
 				$(".navbar-nav li").each(function(e, i) {
-					console.log($(i).find("a").attr("href") + " vs " + context.path);
 					if($(i).find("a").attr("href") == context.path) {
-						$(i).addClass("active", {duration:500});
+						$(i).addClass("active", {duration: 0});
 					}
 				});
+				pageChange();
 			});
-			return false;
 		}
 	});
 	page();
 
-	$('.nav a').on('click', function(){
-    $(".btn-navbar").click(); //bootstrap 2.x
-    $(".navbar-toggle").click() //bootstrap 3.x by Richard
+	if($(".navbar-toggle").is(":visible")) {
+		$('.nav a').on('click', function(){
+		    $(".btn-navbar").click(); //bootstrap 2.x
+		    $(".navbar-toggle").click() //bootstrap 3.x by Richard
+		});
+	};
+	pageChange();
+
 });
-});
+
+function pageChange() {
+	setTimeout(function() {
+		$("span.link").each(function(i, e) {
+			console.log(e);
+			var link = $(e).html();
+			$(e).html("<a href='http://"+link+"'>"+link+"</a>");
+		});
+	}, 400);
+}
